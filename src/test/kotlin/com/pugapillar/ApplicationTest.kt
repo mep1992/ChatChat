@@ -1,4 +1,4 @@
-package com.example
+package com.pugapillar
 
 import kotlin.test.Test
 
