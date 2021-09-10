@@ -5,6 +5,8 @@ import io.ktor.websocket.*
 import java.time.*
 import io.ktor.application.*
 import io.ktor.routing.*
+import java.util.*
+import kotlin.collections.LinkedHashSet
 
 fun Application.configureSockets() {
     install(WebSockets) {
@@ -15,15 +17,24 @@ fun Application.configureSockets() {
     }
 
     routing {
+        val connections = Collections.synchronizedSet<Connection>(LinkedHashSet())
         webSocket("/chat") {
-            send("You are connected!")
+            println("Adding user!")
+            val thisConnection = Connection(this)
+            connections += thisConnection
+            send("You are connected! There are ${connections.count()} users here.")
             for (frame in incoming) {
                 when (frame) {
                     is Frame.Text -> {
-                        val text = frame.readText()
-                        outgoing.send(Frame.Text("YOU SAID: $text"))
-                        if (text.equals("bye", ignoreCase = true)) {
+                        val receivedText = frame.readText()
+                        val textWithUsername = "[${thisConnection.name}]: $receivedText"
+                        connections.forEach {
+                            it.session.send(textWithUsername)
+                        }
+                        if (receivedText.equals("bye", ignoreCase = true)) {
                             close(CloseReason(CloseReason.Codes.NORMAL, "Client said BYE"))
+                            println("Removing $thisConnection!")
+                            connections -= thisConnection
                         }
                     }
                     else -> {
