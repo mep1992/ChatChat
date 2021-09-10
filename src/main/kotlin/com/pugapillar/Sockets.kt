@@ -1,4 +1,4 @@
-package com.pugapillar.plugins
+package com.pugapillar
 
 import io.ktor.http.cio.websocket.*
 import io.ktor.websocket.*
