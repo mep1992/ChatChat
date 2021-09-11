@@ -7,9 +7,18 @@ class Room {
     private val users: MutableSet<User> = Collections.synchronizedSet(LinkedHashSet())
 
     suspend fun broadcast(username: String, message: String) {
-        users.forEach {
-            user -> user.send("[${username}]: $message")
+        broadcast("[${username}]: $message")
+    }
+
+    private suspend fun broadcast(formattedMessage: String) {
+        users.forEach { user ->
+            user.send(formattedMessage)
         }
+    }
+
+    suspend fun remove(user: User) {
+        users.remove(user)
+        broadcast("[${user.name}] has left the chat")
     }
 
     suspend fun addUser(user: User) {

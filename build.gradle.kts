@@ -7,10 +7,10 @@ plugins {
     kotlin("jvm") version "1.5.30"
 }
 
-group = "com.example"
+group = "com.pugapillar"
 version = "0.0.1"
 application {
-    mainClass.set("com.example.ApplicationKt")
+    mainClass.set("com.pugapillar.ApplicationKt")
 }
 
 repositories {
